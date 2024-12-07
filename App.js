@@ -61,12 +61,11 @@ export default function App() {
         await createTable();
         let menuItems = await getMenuItems();
         // The application only fetches the menu data once from a remote URL
-        fetchData();
         // and then stores it into a SQLite database.
         // After that, every application restart loads the menu from the database
         if (!menuItems.length) {
           const menuItems = await fetchData();
-          saveMenuItems(menuItems);
+          saveMenuItems(menuItems); 
         }
 
         const sectionListData = getSectionListData(menuItems);
@@ -137,7 +136,7 @@ export default function App() {
       <SectionList
         style={styles.sectionList}
         sections={data}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item.id}
         renderItem={({ item }) => (
           <Item title={item.title} price={item.price} />
         )}

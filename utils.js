@@ -40,10 +40,36 @@ export const SECTION_LIST_MOCK_DATA = [
  * @see https://reactnative.dev/docs/sectionlist as a reference
  */
 export function getSectionListData(data) {
+  
   // SECTION_LIST_MOCK_DATA is an example of the data structure you need to return from this function.
   // The title of each section should be the category.
   // The data property should contain an array of menu items. 
   // Each item has the following properties: "id", "title" and "price"
+
+  SECTION_LIST_MOCK_DATA[0].data = [];
+  SECTION_LIST_MOCK_DATA[1].data = [];
+  SECTION_LIST_MOCK_DATA[2] = {title:'Beverages', data: []}
+  for (let item of data) {
+    if (item.category === "Appetizers") {
+      SECTION_LIST_MOCK_DATA[0].data.push({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+      })
+    } else if (item.category === "Salads") {
+      SECTION_LIST_MOCK_DATA[1].data.push({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+      })
+    } else {
+      SECTION_LIST_MOCK_DATA[2].data.push({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+      })
+    }
+  }
   return SECTION_LIST_MOCK_DATA;
 }
 
