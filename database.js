@@ -4,18 +4,25 @@ import { SECTION_LIST_MOCK_DATA } from './utils';
 
 export async function createTable() {
   return new Promise((resolve, reject) => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql(
-          'create table if not exists menuitems (id integer primary key not null, uuid text, title text, price text, category text);'
-        );
-      },
-      reject,
-      resolve
+    db.execAsync(
+      `PRAGMA journal_mode = WAL;
+      CREATE TABLE IF NOT EXISTS menuitems (
+        id INTEGER PRIMARY KEY NOT NULL, 
+        uuid TEXT, 
+        title TEXT, 
+        price TEXT, 
+        category TEXT
+      );`,
+      (err) => {
+        if (err) {
+          reject('Create table failed',err); // Reject the promise with the error
+        } else {
+          resolve('Table created successfully'); // Resolve the promise with a success message
+        }
+      }
     );
   });
-}
-
+};
 export async function getMenuItems() {
   return new Promise((resolve) => {
     db.transaction((tx) => {
@@ -31,6 +38,10 @@ export function saveMenuItems(menuItems) {
     // 2. Implement a single SQL statement to save all menu data in a table called menuitems.
     // Check the createTable() function above to see all the different columns the table has
     // Hint: You need a SQL statement to insert multiple rows at once.
+    tx.executeSql(
+      `insert into menuitems (uuid, title, price, category) values ${menuItems.map((item) =>
+        `('${item.id}', '${item.title}', '${item.price}', '${item.category}')`).join(', ')}`
+    )
   });
 }
 

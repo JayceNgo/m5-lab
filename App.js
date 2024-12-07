@@ -31,7 +31,6 @@ const Item = ({ title, price }) => (
 );
 
 export default function App() {
-  const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [searchBarText, setSearchBarText] = useState('');
   const [query, setQuery] = useState('');
@@ -41,28 +40,19 @@ export default function App() {
 
   const fetchData = async() => {
     // 1. Implement this function
+    
     // Fetch the menu from the API_URL endpoint. You can visit the API_URL in your browser to inspect the data returned
     // The category field comes as an object with a property called "title". You just need to get the title value and set it under the key "category".
     // So the server response should be slighly transformed in this function (hint: map function) to flatten out each menu item in the array,
-    try{
+    try{    
       const response = await fetch(API_URL);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-      // Transform the data: Flatten category object to just the title
-      const transformedMenu = data.map(item => ({
-        ...item,
-        category: item.category.title, // Replace category object with its title property
-      }));
-      console.log('Transformed menu data:', transformedMenu); // Inspect the transformed data
-      return transformedMenu;
+      const json = await response.json();
+      const flattenedMenu = json.menu.map((item)=>({ ...item, category: item.category.title}))
+      return flattenedMenu
     }catch(e){
       console.error(error);
-    }finally {
-      setLoading(false);
     }
-    return [];
+    return[];
   }
 
   useEffect(() => {
@@ -70,8 +60,8 @@ export default function App() {
       try {
         await createTable();
         let menuItems = await getMenuItems();
-
         // The application only fetches the menu data once from a remote URL
+        fetchData();
         // and then stores it into a SQLite database.
         // After that, every application restart loads the menu from the database
         if (!menuItems.length) {
